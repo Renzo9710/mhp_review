@@ -64,7 +64,7 @@
     <!-- Arguments for human motion prediction -->
     <arg name="prediction_mode" default="Polynom"/> <!-- Options are None, Kalman, SPL, Polynom, Golay -->
     <arg name="foot_print_prediction_mode" default="None" /> <!-- Options are None, Polynom, Golay -->
-    <arg name="uncertainty_mode" default="GMM"/> <!-- Options are None, GMM and Constant -->
+    <arg name="uncertainty_mode" default="None"/> <!-- Options are None, GMM and Constant -->
 
     <!-- Start robot workspace monitor (obstacle processes (static, dynamic, humans (with extrapolation and uncertainty))) -->
     <include file="$(find mhp_robot)/launch/bringup_scenario.launch">
@@ -77,9 +77,9 @@
         <arg name="human_trajectories" value="$(arg human_trajectories)"/>
         <arg name="workspace_monitor_mode" value="$(arg workspace_monitor_mode)"/>
         <arg name="prediction_mode" value="$(arg prediction_mode)"/>
-                <arg name="foot_print_prediction_mode" value="$(arg foot_print_prediction_mode)" />
-                <arg name="uncertainty_mode" value="$(arg uncertainty_mode)" />
-            </include>
+        <arg name="foot_print_prediction_mode" value="$(arg foot_print_prediction_mode)" />
+        <arg name="uncertainty_mode" value="$(arg uncertainty_mode)" />
+    </include>
 
     <!-- Start distance publisher -->
     <node name="ur_distance_publisher" pkg="ur_utilities" type="ur_distance_publisher" output="screen">
