@@ -114,23 +114,6 @@ bool RobotCollisionPotential::update(double dt)
 
         if (_uncertainty_estimation_human && _human_obstacle_list.size() == 1)
         {
-            if (_uncertainty_mode == SkeletonSplitting && !_human_obstacle_list.at(0)._skeleton_splitting)
-            {
-                ROS_ERROR("RobotCollisionPotential: Check Uncertainty Modes of Planner and Workspace");
-            }
-            else if (_uncertainty_mode == SkeletonSplitting && _human_obstacle_list.at(0)._uncertainty_mode != 0)
-            {
-                ROS_ERROR("RobotCollisionPotential: Check Uncertainty Modes of Planner and Workspace");
-            }
-            else if (_uncertainty_mode == RadiusIncrease && _human_obstacle_list.at(0)._skeleton_splitting)
-            {
-                ROS_ERROR("RobotCollisionPotential: Check Uncertainty Modes of Planner and Workspace");
-            }
-            else if (_ms_planner_mode && !_human_obstacle_list.at(0)._skeleton_splitting && _uncertainty_mode != SkeletonSplitting)
-            {
-                ROS_ERROR("RobotCollisionPotential: Set uncertainty mode to skeleton splitting for MS-planners");
-            }
-
             if (_min_distances)
             {
                 // Default distances dimension update

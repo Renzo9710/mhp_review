@@ -29,33 +29,33 @@
 #include <ros/ros.h>
 #include <limits>
 
-using ObstaclePublisher           = mhp_robot::robot_obstacle::ObstaclePublisher;
-using ObstacleProcessor           = mhp_robot::robot_obstacle::ObstacleProcessor;
+using ObstaclePublisher = mhp_robot::robot_obstacle::ObstaclePublisher;
+using ObstacleProcessor = mhp_robot::robot_obstacle::ObstacleProcessor;
 using ObstacleTrajectoryGenerator = mhp_robot::robot_obstacle::ObstacleTrajectoryGenerator;
 
-using BaseStateEstimatorTaskSpace     = mhp_robot::robot_obstacle::state_estimators::BaseStateEstimatorTaskSpace;
-using KalmanStateEstimatorTaskSpace   = mhp_robot::robot_obstacle::state_estimators::KalmanStateEstimatorTaskSpace;
-using PolynomStateEstimatorTaskSpace  = mhp_robot::robot_obstacle::state_estimators::PolynomStateEstimatorTaskSpace;
+using BaseStateEstimatorTaskSpace = mhp_robot::robot_obstacle::state_estimators::BaseStateEstimatorTaskSpace;
+using KalmanStateEstimatorTaskSpace = mhp_robot::robot_obstacle::state_estimators::KalmanStateEstimatorTaskSpace;
+using PolynomStateEstimatorTaskSpace = mhp_robot::robot_obstacle::state_estimators::PolynomStateEstimatorTaskSpace;
 using SavitzkyGolayEstimatorTaskSpace = mhp_robot::robot_obstacle::state_estimators::SavitzkyGolayStateEstimatorTaskSpace;
 
-using BaseStateEstimatorJointSpace     = mhp_robot::robot_obstacle::state_estimators::BaseStateEstimatorJointSpace;
-using KalmanStateEstimatorJointSpace   = mhp_robot::robot_obstacle::state_estimators::KalmanStateEstimatorJointSpace;
-using PolynomStateEstimatorJointSpace  = mhp_robot::robot_obstacle::state_estimators::PolynomStateEstimatorJointSpace;
+using BaseStateEstimatorJointSpace = mhp_robot::robot_obstacle::state_estimators::BaseStateEstimatorJointSpace;
+using KalmanStateEstimatorJointSpace = mhp_robot::robot_obstacle::state_estimators::KalmanStateEstimatorJointSpace;
+using PolynomStateEstimatorJointSpace = mhp_robot::robot_obstacle::state_estimators::PolynomStateEstimatorJointSpace;
 using SavitzkyGolayEstimatorJointSpace = mhp_robot::robot_obstacle::state_estimators::SavitzkyGolayStateEstimatorJointSpace;
 
-using BaseProcess                       = mhp_robot::robot_obstacle::obstacle_pipeline::BaseProcess;
-using LoadObstacleProcess               = mhp_robot::robot_obstacle::obstacle_pipeline::LoadObstacleProcess;
-using ManualObstacleSimulatorProcess    = mhp_robot::robot_obstacle::obstacle_pipeline::ManualObstacleSimulatorProcess;
+using BaseProcess = mhp_robot::robot_obstacle::obstacle_pipeline::BaseProcess;
+using LoadObstacleProcess = mhp_robot::robot_obstacle::obstacle_pipeline::LoadObstacleProcess;
+using ManualObstacleSimulatorProcess = mhp_robot::robot_obstacle::obstacle_pipeline::ManualObstacleSimulatorProcess;
 using AutomaticObstacleSimulatorProcess = mhp_robot::robot_obstacle::obstacle_pipeline::AutomaticObstacleSimulatorProcess;
-using TFObstacleProcess                 = mhp_robot::robot_obstacle::obstacle_pipeline::TFObstacleProcess;
-using StateEstimationProcess            = mhp_robot::robot_obstacle::obstacle_pipeline::StateEstimationProcess;
-using StateExtrapolationProcess         = mhp_robot::robot_obstacle::obstacle_pipeline::StateExtrapolationProcess;
-using MotionClassificationProcess       = mhp_robot::robot_obstacle::obstacle_pipeline::MotionClassificationProcess;
-using WorkspaceFilterProcess            = mhp_robot::robot_obstacle::obstacle_pipeline::WorkspaceFilterProcess;
-using HumanMotionPredictionProcess      = mhp_robot::robot_obstacle::obstacle_pipeline::HumanMotionPredictionProcess;
-using ForecastUncertaintyProcess        = mhp_robot::robot_obstacle::obstacle_pipeline::ForecastUncertaintyProcess;
+using TFObstacleProcess = mhp_robot::robot_obstacle::obstacle_pipeline::TFObstacleProcess;
+using StateEstimationProcess = mhp_robot::robot_obstacle::obstacle_pipeline::StateEstimationProcess;
+using StateExtrapolationProcess = mhp_robot::robot_obstacle::obstacle_pipeline::StateExtrapolationProcess;
+using MotionClassificationProcess = mhp_robot::robot_obstacle::obstacle_pipeline::MotionClassificationProcess;
+using WorkspaceFilterProcess = mhp_robot::robot_obstacle::obstacle_pipeline::WorkspaceFilterProcess;
+using HumanMotionPredictionProcess = mhp_robot::robot_obstacle::obstacle_pipeline::HumanMotionPredictionProcess;
+using ForecastUncertaintyProcess = mhp_robot::robot_obstacle::obstacle_pipeline::ForecastUncertaintyProcess;
 
-void configurePolynomFilterTaskSpace(PolynomStateEstimatorTaskSpace& filter, double rate)
+void configurePolynomFilterTaskSpace(PolynomStateEstimatorTaskSpace &filter, double rate)
 {
     double dt = 1 / rate;
 
@@ -80,7 +80,7 @@ void configurePolynomFilterTaskSpace(PolynomStateEstimatorTaskSpace& filter, dou
     filter.setF(Fg);
 }
 
-void configureKalmanFilterTaskSpace(KalmanStateEstimatorTaskSpace& filter, double rate)
+void configureKalmanFilterTaskSpace(KalmanStateEstimatorTaskSpace &filter, double rate)
 {
     double dt = 1 / rate;
 
@@ -143,7 +143,7 @@ void configureKalmanFilterTaskSpace(KalmanStateEstimatorTaskSpace& filter, doubl
 }
 
 #ifdef SG
-void configureGolayFilterTaskSpace(SavitzkyGolayEstimatorTaskSpace& filter, double rate)
+void configureGolayFilterTaskSpace(SavitzkyGolayEstimatorTaskSpace &filter, double rate)
 {
     double dt = 1 / rate;
 
@@ -167,24 +167,24 @@ void configureGolayFilterTaskSpace(SavitzkyGolayEstimatorTaskSpace& filter, doub
 
     filter.setF(Fg);
 }
-#endif  // SG
-void configurePolynomFilterJointSpace(PolynomStateEstimatorJointSpace& filter, double rate)
+#endif // SG
+void configurePolynomFilterJointSpace(PolynomStateEstimatorJointSpace &filter, double rate)
 {
     double dt = 1 / rate;
 
     Eigen::Matrix<double, 33, 33> F;
 
     F.setIdentity();
-    F(0, 11)  = dt;
-    F(1, 12)  = dt;
-    F(2, 13)  = dt;
-    F(3, 14)  = dt;
-    F(4, 15)  = dt;
-    F(5, 16)  = dt;
-    F(6, 17)  = dt;
-    F(7, 18)  = dt;
-    F(8, 19)  = dt;
-    F(9, 20)  = dt;
+    F(0, 11) = dt;
+    F(1, 12) = dt;
+    F(2, 13) = dt;
+    F(3, 14) = dt;
+    F(4, 15) = dt;
+    F(5, 16) = dt;
+    F(6, 17) = dt;
+    F(7, 18) = dt;
+    F(8, 19) = dt;
+    F(9, 20) = dt;
     F(10, 21) = dt;
     F(11, 22) = dt;
     F(12, 23) = dt;
@@ -198,22 +198,22 @@ void configurePolynomFilterJointSpace(PolynomStateEstimatorJointSpace& filter, d
     F(20, 31) = dt;
     F(21, 32) = dt;
 
-    F(0, 22)  = 0.5 * dt * dt;
-    F(1, 23)  = 0.5 * dt * dt;
-    F(2, 24)  = 0.5 * dt * dt;
-    F(3, 25)  = 0.5 * dt * dt;
-    F(4, 26)  = 0.5 * dt * dt;
-    F(5, 27)  = 0.5 * dt * dt;
-    F(6, 28)  = 0.5 * dt * dt;
-    F(7, 29)  = 0.5 * dt * dt;
-    F(8, 30)  = 0.5 * dt * dt;
-    F(9, 31)  = 0.5 * dt * dt;
+    F(0, 22) = 0.5 * dt * dt;
+    F(1, 23) = 0.5 * dt * dt;
+    F(2, 24) = 0.5 * dt * dt;
+    F(3, 25) = 0.5 * dt * dt;
+    F(4, 26) = 0.5 * dt * dt;
+    F(5, 27) = 0.5 * dt * dt;
+    F(6, 28) = 0.5 * dt * dt;
+    F(7, 29) = 0.5 * dt * dt;
+    F(8, 30) = 0.5 * dt * dt;
+    F(9, 31) = 0.5 * dt * dt;
     F(10, 32) = 0.5 * dt * dt;
 
     filter.setF(F);
 }
 
-void configureKalmanFilterJointSpace(KalmanStateEstimatorJointSpace& filter, double rate)
+void configureKalmanFilterJointSpace(KalmanStateEstimatorJointSpace &filter, double rate)
 {
     double dt = 1 / rate;
 
@@ -247,16 +247,16 @@ void configureKalmanFilterJointSpace(KalmanStateEstimatorJointSpace& filter, dou
         (dt * dt * dt) / 2.0, (dt * dt * dt) / 2.0, (dt * dt * dt) / 2.0, (dt * dt * dt) / 2.0, (dt * dt * dt) / 2.0, (dt * dt * dt) / 2.0, (dt * dt),
         (dt * dt), (dt * dt), (dt * dt), (dt * dt), (dt * dt), (dt * dt), (dt * dt), (dt * dt), (dt * dt), (dt * dt);
 
-    Q.block<1, 33>(0, 0)  = q1;
-    Q.block<1, 33>(1, 0)  = q1;
-    Q.block<1, 33>(2, 0)  = q1;
-    Q.block<1, 33>(3, 0)  = q1;
-    Q.block<1, 33>(4, 0)  = q1;
-    Q.block<1, 33>(5, 0)  = q1;
-    Q.block<1, 33>(6, 0)  = q1;
-    Q.block<1, 33>(7, 0)  = q1;
-    Q.block<1, 33>(8, 0)  = q1;
-    Q.block<1, 33>(9, 0)  = q1;
+    Q.block<1, 33>(0, 0) = q1;
+    Q.block<1, 33>(1, 0) = q1;
+    Q.block<1, 33>(2, 0) = q1;
+    Q.block<1, 33>(3, 0) = q1;
+    Q.block<1, 33>(4, 0) = q1;
+    Q.block<1, 33>(5, 0) = q1;
+    Q.block<1, 33>(6, 0) = q1;
+    Q.block<1, 33>(7, 0) = q1;
+    Q.block<1, 33>(8, 0) = q1;
+    Q.block<1, 33>(9, 0) = q1;
     Q.block<1, 33>(10, 0) = q1;
     Q.block<1, 33>(11, 0) = q2;
     Q.block<1, 33>(12, 0) = q2;
@@ -284,16 +284,16 @@ void configureKalmanFilterJointSpace(KalmanStateEstimatorJointSpace& filter, dou
     Q = Q * 1e-15;
     Eigen::Matrix<double, 33, 33> F;
     F.setIdentity();
-    F(0, 11)  = dt;
-    F(1, 12)  = dt;
-    F(2, 13)  = dt;
-    F(3, 14)  = dt;
-    F(4, 15)  = dt;
-    F(5, 16)  = dt;
-    F(6, 17)  = dt;
-    F(7, 18)  = dt;
-    F(8, 19)  = dt;
-    F(9, 20)  = dt;
+    F(0, 11) = dt;
+    F(1, 12) = dt;
+    F(2, 13) = dt;
+    F(3, 14) = dt;
+    F(4, 15) = dt;
+    F(5, 16) = dt;
+    F(6, 17) = dt;
+    F(7, 18) = dt;
+    F(8, 19) = dt;
+    F(9, 20) = dt;
     F(10, 21) = dt;
     F(11, 22) = dt;
     F(12, 23) = dt;
@@ -307,30 +307,30 @@ void configureKalmanFilterJointSpace(KalmanStateEstimatorJointSpace& filter, dou
     F(20, 31) = dt;
     F(21, 32) = dt;
 
-    F(0, 22)  = 0.5 * dt * dt;
-    F(1, 23)  = 0.5 * dt * dt;
-    F(2, 24)  = 0.5 * dt * dt;
-    F(3, 25)  = 0.5 * dt * dt;
-    F(4, 26)  = 0.5 * dt * dt;
-    F(5, 27)  = 0.5 * dt * dt;
-    F(6, 28)  = 0.5 * dt * dt;
-    F(7, 29)  = 0.5 * dt * dt;
-    F(8, 30)  = 0.5 * dt * dt;
-    F(9, 31)  = 0.5 * dt * dt;
+    F(0, 22) = 0.5 * dt * dt;
+    F(1, 23) = 0.5 * dt * dt;
+    F(2, 24) = 0.5 * dt * dt;
+    F(3, 25) = 0.5 * dt * dt;
+    F(4, 26) = 0.5 * dt * dt;
+    F(5, 27) = 0.5 * dt * dt;
+    F(6, 28) = 0.5 * dt * dt;
+    F(7, 29) = 0.5 * dt * dt;
+    F(8, 30) = 0.5 * dt * dt;
+    F(9, 31) = 0.5 * dt * dt;
     F(10, 32) = 0.5 * dt * dt;
 
     Eigen::Matrix<double, 11, 33> H;
     H.setZero();
-    H(0, 0)   = 1;
-    H(1, 1)   = 1;
-    H(2, 2)   = 1;
-    H(3, 3)   = 1;
-    H(4, 4)   = 1;
-    H(5, 5)   = 1;
-    H(6, 6)   = 1;
-    H(7, 7)   = 1;
-    H(8, 8)   = 1;
-    H(9, 9)   = 1;
+    H(0, 0) = 1;
+    H(1, 1) = 1;
+    H(2, 2) = 1;
+    H(3, 3) = 1;
+    H(4, 4) = 1;
+    H(5, 5) = 1;
+    H(6, 6) = 1;
+    H(7, 7) = 1;
+    H(8, 8) = 1;
+    H(9, 9) = 1;
     H(10, 10) = 1;
 
     Eigen::Matrix<double, 33, 33> P;
@@ -344,23 +344,23 @@ void configureKalmanFilterJointSpace(KalmanStateEstimatorJointSpace& filter, dou
 }
 
 #ifdef SG
-void configureGolayFilterJointSpace(SavitzkyGolayEstimatorJointSpace& filter, double rate)
+void configureGolayFilterJointSpace(SavitzkyGolayEstimatorJointSpace &filter, double rate)
 {
     double dt = 1 / rate;
 
     Eigen::Matrix<double, 33, 33> F;
 
     F.setIdentity();
-    F(0, 11)  = dt;
-    F(1, 12)  = dt;
-    F(2, 13)  = dt;
-    F(3, 14)  = dt;
-    F(4, 15)  = dt;
-    F(5, 16)  = dt;
-    F(6, 17)  = dt;
-    F(7, 18)  = dt;
-    F(8, 19)  = dt;
-    F(9, 20)  = dt;
+    F(0, 11) = dt;
+    F(1, 12) = dt;
+    F(2, 13) = dt;
+    F(3, 14) = dt;
+    F(4, 15) = dt;
+    F(5, 16) = dt;
+    F(6, 17) = dt;
+    F(7, 18) = dt;
+    F(8, 19) = dt;
+    F(9, 20) = dt;
     F(10, 21) = dt;
     F(11, 22) = dt;
     F(12, 23) = dt;
@@ -374,22 +374,22 @@ void configureGolayFilterJointSpace(SavitzkyGolayEstimatorJointSpace& filter, do
     F(20, 31) = dt;
     F(21, 32) = dt;
 
-    F(0, 22)  = 0.5 * dt * dt;
-    F(1, 23)  = 0.5 * dt * dt;
-    F(2, 24)  = 0.5 * dt * dt;
-    F(3, 25)  = 0.5 * dt * dt;
-    F(4, 26)  = 0.5 * dt * dt;
-    F(5, 27)  = 0.5 * dt * dt;
-    F(6, 28)  = 0.5 * dt * dt;
-    F(7, 29)  = 0.5 * dt * dt;
-    F(8, 30)  = 0.5 * dt * dt;
-    F(9, 31)  = 0.5 * dt * dt;
+    F(0, 22) = 0.5 * dt * dt;
+    F(1, 23) = 0.5 * dt * dt;
+    F(2, 24) = 0.5 * dt * dt;
+    F(3, 25) = 0.5 * dt * dt;
+    F(4, 26) = 0.5 * dt * dt;
+    F(5, 27) = 0.5 * dt * dt;
+    F(6, 28) = 0.5 * dt * dt;
+    F(7, 29) = 0.5 * dt * dt;
+    F(8, 30) = 0.5 * dt * dt;
+    F(9, 31) = 0.5 * dt * dt;
     F(10, 32) = 0.5 * dt * dt;
 
     filter.setF(F);
 }
-#endif  // SG
-int main(int argc, char** argv)
+#endif // SG
+int main(int argc, char **argv)
 {
 #ifndef NDEBUG
     sleep(5);
@@ -401,7 +401,7 @@ int main(int argc, char** argv)
     const double rate = 25;
     ros::Rate loop(rate);
 
-    const double extrapolationStepLength   = 0.1;
+    const double extrapolationStepLength = 0.1;
     const double extrapolationHorizonSteps = 30;
 
     /***************************************************************************************************
@@ -422,7 +422,7 @@ int main(int argc, char** argv)
             "dependency.");
         return 0;
     }
-#endif  // SG
+#endif // SG
 
     int extrapolation_steps = 0;
     n.getParam("/human_motion_extrapolation/extrapolation_steps", extrapolation_steps);
@@ -430,7 +430,7 @@ int main(int argc, char** argv)
     bool constant_velocity_model = false;
     n.getParam("/human_motion_extrapolation/constant_velocity_model", constant_velocity_model);
 
-    int polynom_fit_order  = 3;
+    int polynom_fit_order = 3;
     int polynom_fit_window = 7;
     std::vector<int> vel_filter_estimator_parameter{4, 2, 1};
     std::vector<int> acc_filter_estimator_parameter{15, 2, 2};
@@ -470,12 +470,12 @@ int main(int argc, char** argv)
     }
 
     // Extracting Parameters for foot print prediction
-    int foot_polynom_fit_order  = 3;
+    int foot_polynom_fit_order = 3;
     int foot_polynom_fit_window = 7;
     std::vector<int> foot_vel_filter_estimator_parameter{4, 2, 1};
     std::vector<int> foot_acc_filter_estimator_parameter{15, 2, 2};
 
-    std::string foot_print_predicition_mode = "None";  // foot print prediction uses the same amount of steps as the human motion prediction
+    std::string foot_print_predicition_mode = "None"; // foot print prediction uses the same amount of steps as the human motion prediction
     n.getParam("/footprint_human_motion_extrapolation/foot_print_prediction_mode", foot_print_predicition_mode);
 
     // Extracting polynom parameters from Parameter Server for footprint prediction
@@ -534,17 +534,17 @@ int main(int argc, char** argv)
     ObstaclePublisher obstacle_publisher;
 
     // Create processes
-    LoadObstacleProcess::UPtr load_obstacle_ptr               = std::make_unique<LoadObstacleProcess>("LoadObstacle");
+    LoadObstacleProcess::UPtr load_obstacle_ptr = std::make_unique<LoadObstacleProcess>("LoadObstacle");
     ManualObstacleSimulatorProcess::UPtr manual_simulator_ptr = std::make_unique<ManualObstacleSimulatorProcess>("ManualSimulator");
     AutomaticObstacleSimulatorProcess::UPtr automatic_simulator_ptr =
         std::make_unique<AutomaticObstacleSimulatorProcess>("AutomaticSimulator", true, prediction_mode);
-    TFObstacleProcess::UPtr tf_obstacle_ptr                 = std::make_unique<TFObstacleProcess>("TFObstacleLookup");
-    StateEstimationProcess::UPtr state_estimation_ptr       = std::make_unique<StateEstimationProcess>("StateEstimation");
+    TFObstacleProcess::UPtr tf_obstacle_ptr = std::make_unique<TFObstacleProcess>("TFObstacleLookup");
+    StateEstimationProcess::UPtr state_estimation_ptr = std::make_unique<StateEstimationProcess>("StateEstimation");
     StateExtrapolationProcess::UPtr state_extrapolation_ptr = std::make_unique<StateExtrapolationProcess>(
         "StateExtrapolation", extrapolationStepLength, extrapolationHorizonSteps, extrapolation_steps, constant_velocity_model);
     MotionClassificationProcess::UPtr motion_classification_ptr =
         std::make_unique<MotionClassificationProcess>("MotionClassification", 0.2, std::numeric_limits<double>::max());
-    WorkspaceFilterProcess::UPtr workspace_filter_ptr       = std::make_unique<WorkspaceFilterProcess>("WorkspaceDistanceFilter", 2);
+    WorkspaceFilterProcess::UPtr workspace_filter_ptr = std::make_unique<WorkspaceFilterProcess>("WorkspaceDistanceFilter", 2);
     HumanMotionPredictionProcess::UPtr human_prediction_ptr = std::make_unique<HumanMotionPredictionProcess>("HumanMotionPrediction");
     ForecastUncertaintyProcess::UPtr forecast_uncertainty_ptr =
         std::make_unique<ForecastUncertaintyProcess>("ForecastUncertainty", rate, extrapolationStepLength, extrapolationHorizonSteps, gmm_samples,
@@ -555,7 +555,7 @@ int main(int argc, char** argv)
     /**************************************************************************************************/
     // Each obstacle has an individual state estimator --> the obstacle id and the state estimator id has to be equal!
 
-    std::map<int, BaseStateEstimatorTaskSpace::UPtr> state_estimators_task_space;  // map for all state estimators
+    std::map<int, BaseStateEstimatorTaskSpace::UPtr> state_estimators_task_space; // map for all state estimators
 
     // Uncomment if specific state estimator for a dynamic obstacle is desired
     // State estimators Task Space
@@ -587,7 +587,7 @@ int main(int argc, char** argv)
         if (foot_print_predicition_mode.compare("Polynom") == 0)
         {
             PolynomStateEstimatorTaskSpace::UPtr polynom_ts_foot_ptr =
-                std::make_unique<PolynomStateEstimatorTaskSpace>(0, foot_polynom_fit_order, foot_polynom_fit_window);  // human id=0
+                std::make_unique<PolynomStateEstimatorTaskSpace>(0, foot_polynom_fit_order, foot_polynom_fit_window); // human id=0
             configurePolynomFilterTaskSpace(*polynom_ts_foot_ptr, rate);
             state_estimators_task_space.insert(
                 std::pair<int, BaseStateEstimatorTaskSpace::UPtr>(polynom_ts_foot_ptr->_id, std::move(polynom_ts_foot_ptr)));
@@ -596,15 +596,15 @@ int main(int argc, char** argv)
         else if (foot_print_predicition_mode.compare("Golay") == 0)
         {
             SavitzkyGolayEstimatorTaskSpace::UPtr golay_ts_foot_ptr = std::make_unique<SavitzkyGolayEstimatorTaskSpace>(
-                0, foot_vel_filter_estimator_parameter, foot_acc_filter_estimator_parameter);  // human id=0
+                0, foot_vel_filter_estimator_parameter, foot_acc_filter_estimator_parameter); // human id=0
             configureGolayFilterTaskSpace(*golay_ts_foot_ptr, rate);
             state_estimators_task_space.insert(
                 std::pair<int, BaseStateEstimatorTaskSpace::UPtr>(golay_ts_foot_ptr->_id, std::move(golay_ts_foot_ptr)));
         }
-#endif  // SG
+#endif // SG
         else if (foot_print_predicition_mode.compare("Kalman") == 0)
         {
-            KalmanStateEstimatorTaskSpace::UPtr kalman_ts_foot_ptr = std::make_unique<KalmanStateEstimatorTaskSpace>(0);  // human id=0
+            KalmanStateEstimatorTaskSpace::UPtr kalman_ts_foot_ptr = std::make_unique<KalmanStateEstimatorTaskSpace>(0); // human id=0
             configureKalmanFilterTaskSpace(*kalman_ts_foot_ptr, rate);
             state_estimators_task_space.insert(
                 std::pair<int, BaseStateEstimatorTaskSpace::UPtr>(kalman_ts_foot_ptr->_id, std::move(kalman_ts_foot_ptr)));
@@ -616,14 +616,14 @@ int main(int argc, char** argv)
     {
         if (prediction_mode.compare("Kalman") == 0)
         {
-            KalmanStateEstimatorJointSpace::UPtr kalman1_js_ptr = std::make_unique<KalmanStateEstimatorJointSpace>(0);  // human id=0
+            KalmanStateEstimatorJointSpace::UPtr kalman1_js_ptr = std::make_unique<KalmanStateEstimatorJointSpace>(0); // human id=0
             configureKalmanFilterJointSpace(*kalman1_js_ptr, rate);
             state_estimators_joint_space.insert(std::pair<int, BaseStateEstimatorJointSpace::UPtr>(kalman1_js_ptr->_id, std::move(kalman1_js_ptr)));
         }
         else if (prediction_mode.compare("Polynom") == 0)
         {
             PolynomStateEstimatorJointSpace::UPtr polynom_js_ptr =
-                std::make_unique<PolynomStateEstimatorJointSpace>(0, polynom_fit_order, polynom_fit_window);  // human id=0
+                std::make_unique<PolynomStateEstimatorJointSpace>(0, polynom_fit_order, polynom_fit_window); // human id=0
             configurePolynomFilterJointSpace(*polynom_js_ptr, rate);
             state_estimators_joint_space.insert(std::pair<int, BaseStateEstimatorJointSpace::UPtr>(polynom_js_ptr->_id, std::move(polynom_js_ptr)));
         }
@@ -631,20 +631,22 @@ int main(int argc, char** argv)
         else if (prediction_mode.compare("Golay") == 0)
         {
             SavitzkyGolayEstimatorJointSpace::UPtr sg_js_ptr =
-                std::make_unique<SavitzkyGolayEstimatorJointSpace>(0, vel_filter_estimator_parameter, acc_filter_estimator_parameter);  // human id=0
+                std::make_unique<SavitzkyGolayEstimatorJointSpace>(0, vel_filter_estimator_parameter, acc_filter_estimator_parameter); // human id=0
             configureGolayFilterJointSpace(*sg_js_ptr, rate);
             state_estimators_joint_space.insert(std::pair<int, BaseStateEstimatorJointSpace::UPtr>(sg_js_ptr->_id, std::move(sg_js_ptr)));
         }
-#endif  // SG
+#endif // SG
     }
 
     int se_ts_size = state_estimators_task_space.size();
     int se_js_size = state_estimators_joint_space.size();
     // set state estimators for task space obstacles (obstacles + human foot prints) in the estimation process
-    if (se_ts_size > 0) state_estimation_ptr->setEstimatorsTaskSpace(state_estimators_task_space);
+    if (se_ts_size > 0)
+        state_estimation_ptr->setEstimatorsTaskSpace(state_estimators_task_space);
 
     // set state estimators for joint space estimation in the estimation process
-    if (se_js_size > 0) state_estimation_ptr->setEstimatorsJointSpace(state_estimators_joint_space);
+    if (se_js_size > 0)
+        state_estimation_ptr->setEstimatorsJointSpace(state_estimators_joint_space);
 
     /***************************************************************************************************
         Define pipelines and processes that are executed iteratively
@@ -702,13 +704,21 @@ int main(int argc, char** argv)
     }
 
     // Add RNN-SPL process for neural network human motion processes (estimation and extrapolation still required for foot print extrapolation)
-    if (prediction_mode.compare("SPL") == 0) pre_process_pipeline.push_back(std::move(human_prediction_ptr));
+    if (prediction_mode.compare("SPL") == 0)
+        pre_process_pipeline.push_back(std::move(human_prediction_ptr));
 
     // Add uncertainty forecasting process
     if (uncertainty_mode.compare("None") != 0)
     {
-        ROS_WARN("Add uncertainty forecasting process");
-        pre_process_pipeline.push_back(std::move(forecast_uncertainty_ptr));
+        if (prediction_mode.compare("Polynom") == 0 || prediction_mode.compare("Golay") == 0 || prediction_mode.compare("Kalman") == 0)
+        {
+            ROS_INFO("Add uncertainty forecasting process");
+            pre_process_pipeline.push_back(std::move(forecast_uncertainty_ptr));
+        }
+        else
+        {
+            ROS_WARN("RobotWorkSpaceMonitor: Uncertainty forecasting is not available without human motion extrapolation and is deactivated ");
+        }
     }
 
     // Add motion classificator (is dynamic obstacle temporary static or not)
@@ -760,7 +770,7 @@ int main(int argc, char** argv)
                                             obstacle_post_processor._humans, obstacle_post_processor._utility_objects,
                                             obstacle_post_processor._planes);
 
-        ros::spinOnce();  // in case we have processes that have callbacks
+        ros::spinOnce(); // in case we have processes that have callbacks
 
         loop.sleep();
     }
